@@ -22,5 +22,6 @@ public class Api {
     }
 
     public static void main(String[] args) throws IOException {
+        System.out.println(getConnection("Đ%E1%BA%B9k+L%E1%BA%A1k"));
     }
 }

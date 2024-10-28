@@ -19,20 +19,20 @@ public class DataWeather {
         this.conn = Api.getConnection(province);
     }
 
+
     public StringBuilder getDataWeather() {
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder jsonResponse = new StringBuilder();
+        StringBuilder jsonResponse = new StringBuilder();
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        ) {
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
                 jsonResponse.append(inputLine);
             }
-            in.close();
-            return jsonResponse;
         } catch (IOException e) {
-            System.out.println(e);
+            System.out.println("Lỗi khi gọi API: " + e.getMessage());
             throw new RuntimeException(e);
         }
+        return jsonResponse;
     }
 
     private String[] header = {"name", "datetime", "temp", "feelslike", "dew", "humidity",
@@ -50,9 +50,8 @@ public class DataWeather {
         //lay ra cac nested json obj
         List<Map<String, Object>> days = (List<Map<String, Object>>) datas.get("days");
 
-        try (CSVWriter writer = new CSVWriter(new FileWriter(path))) {
-            writer.writeNext(header);
-
+        try (CSVWriter writer = new CSVWriter(new FileWriter(path, true))) {
+//            writer.writeNext(header);
             String name = datas.get("resolvedAddress").toString();
             for (Map<String, Object> day : days
             ) {
@@ -90,6 +89,7 @@ public class DataWeather {
                 }
             }
             System.out.println("Dữ liệu đã được lưu vào file: " + path);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -102,8 +102,8 @@ public class DataWeather {
 
 
     public static void main(String[] args) throws IOException {
-//        DataWeather dw = new DataWeather();
-//        dw.saveToCsv();
+        DataWeather dw = new DataWeather("B%C3%A0+R%E1%BB%8Ba+-+V%C3%B9ng+T%C3%A0u");
+        dw.saveToCsv();
 
     }
 
