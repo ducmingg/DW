@@ -3,7 +3,7 @@ package org.example.Services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.CSVWriter;
-import org.example.Model.Api;
+import org.example.Api.Api;
 
 import java.io.*;
 import java.net.HttpURLConnection;
