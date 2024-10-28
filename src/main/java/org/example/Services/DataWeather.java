@@ -13,7 +13,8 @@ import java.util.Map;
 
 public class DataWeather {
     private HttpURLConnection conn;
-    private String path = "C:\\Users\\voduc\\Data_Warehouse_Weather\\src\\main\\java\\org\\example\\weather.csv";
+    //    private String path = "C:\\Users\\voduc\\Data_Warehouse_Weather\\src\\main\\java\\org\\example\\weather.csv";
+    private String path = "C:\\Users\\voduc\\Data_Weather\\weather.csv";
 
     public DataWeather(String province) throws IOException {
         this.conn = Api.getConnection(province);
@@ -41,7 +42,7 @@ public class DataWeather {
             "visibility", "solarradiation", "solarenergy", "uvindex", "severerisk",
             "conditions", "icon", "stations"};
 
-    public void saveToCsv() throws IOException {
+    public void saveToCsv(String path) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         // chuyen json => map(string : obj)
         Map<String, Object> datas = mapper.readValue(getDataWeather().toString(), new TypeReference<Map<String, Object>>() {
@@ -102,9 +103,7 @@ public class DataWeather {
 
 
     public static void main(String[] args) throws IOException {
-        DataWeather dw = new DataWeather("B%C3%A0+R%E1%BB%8Ba+-+V%C3%B9ng+T%C3%A0u");
-        dw.saveToCsv();
-
+//        dw.saveToCsv();
     }
 
 }

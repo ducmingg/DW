@@ -55,9 +55,9 @@ public class Main {
                 "Y%C3%AAn+B%C3%A1i"
         };
         ;
-        for (int i = 0; i < encodedProvinces.length; i++) {
-            DataWeather dw = new DataWeather(encodedProvinces[i]);
-            dw.saveToCsv();
-        }
+//        for (int i = 0; i < encodedProvinces.length; i++) {
+//            DataWeather dw = new DataWeather(encodedProvinces[i]);
+//            dw.saveToCsv();
+//        }
     }
 }
