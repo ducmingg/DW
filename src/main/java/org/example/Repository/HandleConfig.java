@@ -103,6 +103,17 @@ public class HandleConfig {
         }
     }
 
+    public void updateFilePathConfigs(int id, String path_file) {
+        try (CallableStatement statement = conn.prepareCall("{CALL update_file_path_configs(?,?)}")) {
+            statement.setInt(1, id);
+            statement.setString(2, path_file);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void main(String[] args) {
         HandleConfig handleConfig = new HandleConfig();
         System.out.println(handleConfig.getConfig().toString());
