@@ -13,11 +13,15 @@ import java.util.Map;
 
 public class DataWeather {
     private HttpURLConnection conn;
-    //    private String path = "C:\\Users\\voduc\\Data_Warehouse_Weather\\src\\main\\java\\org\\example\\weather.csv";
-    private String path = "C:\\Users\\voduc\\Data_Weather\\weather.csv";
+    private String path;
 
-    public DataWeather(String province) throws IOException {
+    private String nameFile;
+    //    private String path = "C:\\Users\\voduc\\Data_Warehouse_Weather\\src\\main\\java\\org\\example\\weather.csv";
+    //    private String path = "C:\\Users\\voduc\\Data_Weather\\weather.csv";
+
+    public DataWeather(String province, String path) throws IOException {
         this.conn = Api.getConnection(province);
+        this.path = path;
     }
 
 

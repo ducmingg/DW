@@ -56,6 +56,7 @@ public class HandleConfig {
 
     public void updateProcessingConfigs(int id, int processing) {
         try (CallableStatement statement = conn.prepareCall("{CALL update_isProcessing_configs(?,?)}")) {
+            System.out.println("updateProcessing");
             statement.setInt(1, id);
             statement.setInt(2, processing);
             statement.execute();
@@ -77,9 +78,35 @@ public class HandleConfig {
         }
     }
 
+    public int getProcessingCount() {
+        String sql = "Select count(*) from configs where is_processing = 1";
+        int count = 0;
+        try (Statement statement = conn.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql);) {
+            while (resultSet.next()) {
+                count++;
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+        return count;
+    }
+
+    public void truncate_staging(String dbName) {
+        try (CallableStatement statement = conn.prepareCall("{CALL truncate_stating(?)}")) {
+            statement.setString(1, dbName);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void main(String[] args) {
         HandleConfig handleConfig = new HandleConfig();
         System.out.println(handleConfig.getConfig().toString());
         handleConfig.insertStatusLogs(1, "stt", "description");
+        System.out.println(handleConfig.getProcessingCount());
     }
 }
