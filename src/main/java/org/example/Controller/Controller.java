@@ -1,17 +1,13 @@
 package org.example.Controller;
 
-import com.opencsv.CSVWriter;
 import org.example.Entity.Config;
 import org.example.Entity.Provinces;
 import org.example.Repository.HandleConfig;
 import org.example.Services.DataWeather;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class Controller {
@@ -47,10 +43,11 @@ public class Controller {
 
     }
 
+
     public static void main(String[] args) throws IOException {
         Controller controller = new Controller();
         controller.crawlData();
-     
+
         ;
     }
 }

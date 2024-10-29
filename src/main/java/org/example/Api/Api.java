@@ -3,12 +3,16 @@ package org.example.Api;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Properties;
 
 public class Api {
     static HttpURLConnection conn;
 
     public static HttpURLConnection getConnection(String province) throws IOException {
-        URL url = new URL("https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/" + province + "/tomorrow?unitGroup=metric&include=hours%2Cdays&key=KBEND38354CYDL8J58VTCBCMC");
+        Properties properties = new Properties();
+        String key = properties.getProperty("key");
+
+        URL url = new URL("https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/" + province + "/tomorrow?unitGroup=metric&include=hours%2Cdays&key=" + key);
         conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Accept", "application/json");

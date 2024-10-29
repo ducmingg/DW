@@ -16,6 +16,48 @@ public class HandleConfig {
         this.conn = ConnectionDB.getConnection();
     }
 
+    public void loadToStaging() {
+        String pathFile = null; // Khai báo biến pathFile
+        String sql = "SELECT * FROM configs";
+
+        try (Statement statement = conn.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+
+            // Lấy đường dẫn file từ bảng configs
+            if (resultSet.next()) {
+                pathFile = resultSet.getString("path_file");
+            }
+
+            if (pathFile != null) { // Kiểm tra xem pathFile có khác null không
+                // Tạo câu lệnh SQL để tải dữ liệu
+                String query = "LOAD DATA LOCAL INFILE '" + pathFile + "' " + // Sử dụng nháy đơn đúng cách
+                        "INTO TABLE staging.staging " +
+                        "FIELDS TERMINATED BY ',' " +
+                        "ENCLOSED BY '\"' " + // Escape double quote with backslash
+                        "LINES TERMINATED BY '\\n' " + // Escape newline with double backslash
+                        "IGNORE 1 ROWS " +
+                        "(`name`, `datetime`, `temp`, `feelslike`, `dew`, `humidity`, `precip`, " +
+                        "`precipprob`, `preciptype`, `snow`, `snowdepth`, `windgust`, " +
+                        "`windspeed`, `winddir`, `pressure`, `cloudcover`, `visibility`, " +
+                        "`solarradiation`, `solarenergy`, `uvindex`, `severerisk`, `conditions`, " +
+                        "`icon`, `stations`);";
+
+                // Thực thi câu lệnh LOAD DATA
+                try {
+                    statement.execute(query);
+                } catch (SQLException e) {
+                    throw new RuntimeException("Error executing LOAD DATA command: " + e.getMessage(), e);
+                }
+            } else {
+                System.out.println("No path file found in configs.");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error executing query: " + e.getMessage(), e);
+        }
+    }
+
+
     public List<Config> getConfig() {
         String sql = "select * from configs where flag = 1 ORDER BY id DESC";
         List<Config> configs = new ArrayList<>();
@@ -116,8 +158,9 @@ public class HandleConfig {
 
     public static void main(String[] args) {
         HandleConfig handleConfig = new HandleConfig();
-        System.out.println(handleConfig.getConfig().toString());
-        handleConfig.insertStatusLogs(1, "stt", "description");
-        System.out.println(handleConfig.getProcessingCount());
+//        System.out.println(handleConfig.getConfig().toString());
+//        handleConfig.insertStatusLogs(1, "stt", "description");
+//        System.out.println(handleConfig.getProcessingCount());
+        handleConfig.loadToStaging();
     }
 }
