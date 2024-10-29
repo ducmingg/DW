@@ -158,9 +158,6 @@ public class HandleConfig {
 
     public static void main(String[] args) {
         HandleConfig handleConfig = new HandleConfig();
-//        System.out.println(handleConfig.getConfig().toString());
-//        handleConfig.insertStatusLogs(1, "stt", "description");
-//        System.out.println(handleConfig.getProcessingCount());
         handleConfig.loadToStaging();
     }
 }
