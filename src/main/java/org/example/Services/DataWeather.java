@@ -52,9 +52,14 @@ public class DataWeather {
         Map<String, Object> datas = mapper.readValue(getDataWeather().toString(), new TypeReference<Map<String, Object>>() {
         });
 
+        File file = new File(path);
         //lay ra cac nested json obj
         List<Map<String, Object>> days = (List<Map<String, Object>>) datas.get("days");
         try (CSVWriter writer = new CSVWriter(new FileWriter(path, true))) {
+            if (!file.exists() || file.length() == 0) {
+
+                writer.writeNext(header);
+            }
 //            writer.writeNext(header);
             String name = datas.get("resolvedAddress").toString();
             for (Map<String, Object> day : days
