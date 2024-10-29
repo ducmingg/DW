@@ -29,7 +29,8 @@ public class Controller {
             String directory = config.getDirectory();
             String file_name = config.getFile_name();
             String path = directory + file_name + dt_now.format(now) + ".csv";
-//            File file = new File(path);
+            File file = new File(path);
+            file.createNewFile();
             for (String province : provinces
             ) {
                 DataWeather dw = new DataWeather(province, path);
@@ -46,8 +47,10 @@ public class Controller {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Controller controller = new Controller();
         controller.crawlData();
+     
+        ;
     }
 }

@@ -54,7 +54,6 @@ public class DataWeather {
 
         //lay ra cac nested json obj
         List<Map<String, Object>> days = (List<Map<String, Object>>) datas.get("days");
-
         try (CSVWriter writer = new CSVWriter(new FileWriter(path, true))) {
 //            writer.writeNext(header);
             String name = datas.get("resolvedAddress").toString();
