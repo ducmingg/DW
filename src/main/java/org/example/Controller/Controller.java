@@ -43,6 +43,24 @@ public class Controller {
 
     }
 
+    public void loadToStaging() {
+        HandleConfig handleConfig = new HandleConfig();
+        try {
+            handleConfig.truncateStaging();
+            handleConfig.updateProcessingConfigs(2, 1);
+            handleConfig.updateStatusConfigs(2, "EXTRACTING");
+            handleConfig.insertStatusLogs(2, "EXTRACTING", "START EXTRACT DATA");
+            handleConfig.loadToStaging();
+            handleConfig.insertStatusLogs(2, "TRUNCATED", "TRUNCATED STAGING");
+        } catch (Exception e) {
+            handleConfig.insertStatusLogs(2, "ERROR", e.getMessage());
+            handleConfig.updateStatusConfigs(2, "ERROR");
+            handleConfig.insertStatusLogs(2, "TRUNCATED", "TRUNCATED STAGING ERROR");
+            e.printStackTrace(); // Bắt mọi loại ngoại lệ khác
+        } finally {
+            handleConfig.insertStatusLogs(2, "IMPORT TO STAGING", "FINISH");
+        }
+    }
 
     public static void main(String[] args) throws IOException {
         Controller controller = new Controller();

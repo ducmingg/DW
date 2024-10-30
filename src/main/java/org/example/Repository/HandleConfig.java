@@ -85,6 +85,15 @@ public class HandleConfig {
         return configs;
     }
 
+    public void truncateStaging() {
+        try (CallableStatement statement = conn.prepareCall("{CALL truncate_staging_table()}")) {
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+    }
+
     public void updateStatusConfigs(int id, String status) {
         try (CallableStatement statement = conn.prepareCall("{CALL update_status_configs(?,?)}")) {
             statement.setInt(1, id);

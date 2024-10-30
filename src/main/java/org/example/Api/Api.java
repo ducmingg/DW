@@ -1,5 +1,6 @@
 package org.example.Api;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -10,6 +11,9 @@ public class Api {
 
     public static HttpURLConnection getConnection(String province) throws IOException {
         Properties properties = new Properties();
+        try (FileInputStream input = new FileInputStream("config.properties")) {
+            properties.load(input);
+        }
         String key = properties.getProperty("key");
 
         URL url = new URL("https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/" + province + "/tomorrow?unitGroup=metric&include=hours%2Cdays&key=" + key);
