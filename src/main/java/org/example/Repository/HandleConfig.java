@@ -165,8 +165,18 @@ public class HandleConfig {
         }
     }
 
+
+    public void loadToDateDim() {
+        try (CallableStatement statement = conn.prepareCall("{CALL import_to_date_dim()}")) {
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void main(String[] args) {
         HandleConfig handleConfig = new HandleConfig();
-        handleConfig.loadToStaging();
+        handleConfig.loadToDateDim();
     }
 }

@@ -11,8 +11,11 @@ public class Api {
 
     public static HttpURLConnection getConnection(String province) throws IOException {
         Properties properties = new Properties();
-        try (FileInputStream input = new FileInputStream("config.properties")) {
-            properties.load(input);
+        try (FileInputStream fis = new FileInputStream("src/main/resources/config.properties")) {
+            properties.load(fis);
+        } catch (IOException e) {
+            System.out.println(e);
+            e.printStackTrace();
         }
         String key = properties.getProperty("key");
 

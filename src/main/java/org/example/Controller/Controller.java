@@ -62,6 +62,24 @@ public class Controller {
         }
     }
 
+    public void loadToDateDim() {
+        HandleConfig handleConfig = new HandleConfig();
+        try {
+            handleConfig.updateProcessingConfigs(3, 1);
+            handleConfig.updateStatusConfigs(3, "LOAD TO DATE_DIM");
+            handleConfig.insertStatusLogs(3, "LOADING", "LOAD TO DATE_DIM");
+            handleConfig.loadToDateDim();
+            handleConfig.insertStatusLogs(3, "LOADED", "LOAD TO DATE_DIM DONE");
+        } catch (Exception e) {
+            handleConfig.insertStatusLogs(3, "ERROR", e.getMessage());
+            handleConfig.updateStatusConfigs(3, "ERROR");
+            handleConfig.insertStatusLogs(3, "LOADED", " LOAD TO DATE_DIM DONE ERROR");
+            e.printStackTrace(); // Bắt mọi loại ngoại lệ khác
+        } finally {
+            handleConfig.insertStatusLogs(2, "LOAD TO DATE_DIM", "FINISH");
+        }
+    }
+
     public static void main(String[] args) throws IOException {
         Controller controller = new Controller();
         controller.crawlData();
