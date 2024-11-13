@@ -74,12 +74,13 @@ public class Controller {
             handleConfig.insertStatusLogs(3, "ERROR", e.getMessage());
             handleConfig.updateStatusConfigs(3, "ERROR");
             handleConfig.insertStatusLogs(3, "LOADED", " LOAD TO DATE_DIM DONE ERROR");
-            e.printStackTrace(); // Bắt mọi loại ngoại lệ khác
+            e.printStackTrace();
         } finally {
             handleConfig.insertStatusLogs(2, "LOAD TO DATE_DIM", "FINISH");
         }
     }
 
+    
     public static void main(String[] args) throws IOException {
         Controller controller = new Controller();
         controller.crawlData();

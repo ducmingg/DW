@@ -18,7 +18,7 @@ public class HandleConfig {
 
     public void loadToStaging() {
         String pathFile = null; // Khai báo biến pathFile
-        String sql = "SELECT * FROM configs";
+        String sql = "SELECT * FROM configs where id = 1";
 
         try (Statement statement = conn.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
@@ -27,7 +27,7 @@ public class HandleConfig {
             if (resultSet.next()) {
                 pathFile = resultSet.getString("path_file");
             }
-
+            System.out.println(pathFile);
             if (pathFile != null) { // Kiểm tra xem pathFile có khác null không
                 // Tạo câu lệnh SQL để tải dữ liệu
                 String query = "LOAD DATA LOCAL INFILE '" + pathFile + "' " + // Sử dụng nháy đơn đúng cách
@@ -165,7 +165,6 @@ public class HandleConfig {
         }
     }
 
-
     public void loadToDateDim() {
         try (CallableStatement statement = conn.prepareCall("{CALL import_to_date_dim()}")) {
             statement.execute();
@@ -174,6 +173,7 @@ public class HandleConfig {
             throw new RuntimeException(e);
         }
     }
+
 
     public static void main(String[] args) {
         HandleConfig handleConfig = new HandleConfig();
