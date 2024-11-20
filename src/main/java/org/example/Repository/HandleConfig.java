@@ -114,6 +114,17 @@ public class HandleConfig {
         }
     }
 
+    public void updateFlagConfig(int id, int flag) {
+        try (CallableStatement statement = conn.prepareCall("{CALL update_flag_configs(?,?)}")) {
+            statement.setInt(1, id);
+            statement.setInt(2, flag);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+    }
+
     public void updateStatusConfigs(int id, String status) {
         try (CallableStatement statement = conn.prepareCall("{CALL update_status_configs(?,?)}")) {
             statement.setInt(1, id);

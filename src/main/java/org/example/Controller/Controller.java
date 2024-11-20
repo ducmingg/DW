@@ -47,8 +47,14 @@ public class Controller {
 //            28. Cập nhật status của config thành CRAWLED
             handleConfig.insertStatusLogs(1, "CRAWLED", "CRAWL HOAN THANH");
         } catch (Exception e) {
-//            20. Thêm thông tin lỗi khi lấy dữ liệu của thành phố đó vào log
+//            20+23. Thêm thông tin lỗi  vào log
             handleConfig.insertStatusLogs(1, "ERROR", e.getMessage());
+//            22. Cập nhật status của config thành ERROR
+            handleConfig.updateStatusConfigs(1, "ERROR");
+//            24. Chỉnh Flag=0 cho config
+            handleConfig.updateFlagConfig(1, 0);
+//            25. Cập nhật is_processing của config la 0
+            handleConfig.updateProcessingConfigs(1, 0);
             e.printStackTrace(); // Bắt mọi loại ngoại lệ khác
         } finally {
 //            29. Thêm thông tin đã crawl dữ liệu vào log
