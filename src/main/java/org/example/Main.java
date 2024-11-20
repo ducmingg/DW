@@ -11,8 +11,8 @@ public class Main {
         Controller controller = new Controller();
         try {
 //            controller.crawlData();
-            controller.loadToStaging();
-//            controller.loadToDateDim();
+//            controller.loadToStaging();
+            controller.loadToDateDim();
         } catch (Exception e) {
             e.printStackTrace();
         }

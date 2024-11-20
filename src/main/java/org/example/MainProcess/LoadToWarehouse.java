@@ -6,7 +6,7 @@ import org.example.Repository.HandleConfig;
 
 import java.util.List;
 
-public class LoadToStaging {
+public class LoadToWarehouse {
     public static void main(String[] args) {
 //        2+3.load cac thuoc tinh trong properties va ket noi den database control
         HandleConfig handleConfig = new HandleConfig();
@@ -29,8 +29,8 @@ public class LoadToStaging {
 //                10.Lay ra status cua config do
                     String status = config.getStatus();
 //                    11.Kiểm tra xem status có phải là OFF hay FINISHED hay không
-                    if (status.equals("CRAWLED")) {
-                        controller.loadToStaging();
+                    if (status.equals("EXTRACTED")) {
+                        controller.loadToDateDim();
                     }
                     System.out.println("End");
                 }
