@@ -45,7 +45,7 @@ public class Controller {
 //            27. Cập nhật đường dẫn chi tiết của file CSV
             handleConfig.updateFilePathConfigs(1, path);
 //            28. Cập nhật status của config thành CRAWLED
-            handleConfig.insertStatusLogs(1, "CRAWLED", "CRAWL HOAN THANH");
+            handleConfig.updateStatusConfigs(1, "CRAWLED");
         } catch (Exception e) {
 //            20+23. Thêm thông tin lỗi  vào log
             handleConfig.insertStatusLogs(1, "ERROR", e.getMessage());
@@ -64,21 +64,44 @@ public class Controller {
     }
 
     public void loadToStaging() {
+
         HandleConfig handleConfig = new HandleConfig();
         try {
-            handleConfig.truncateStaging();
+//        12.Cập nhật  trạng thái của config là đang xử lý (isProcessing=true)
             handleConfig.updateProcessingConfigs(2, 1);
+//            13. Cập nhật status của config thành EXTRACTING
             handleConfig.updateStatusConfigs(2, "EXTRACTING");
+//            14. Thêm thông tin đang extract to staging vào log
             handleConfig.insertStatusLogs(2, "EXTRACTING", "START EXTRACT DATA");
-            handleConfig.loadToStaging();
+//            15.Truncate table
+            handleConfig.truncateStaging();
+//            16. Thêm thông tin đã truncate table staging vào log
             handleConfig.insertStatusLogs(2, "TRUNCATED", "TRUNCATED STAGING");
+//            17. Load dữ liệu file CSV vào table Staging
+            handleConfig.loadToStaging();
+
         } catch (Exception e) {
-            handleConfig.insertStatusLogs(2, "ERROR", e.getMessage());
+
+
+//            22. Cập nhật giá trị flag
             handleConfig.updateStatusConfigs(2, "ERROR");
-            handleConfig.insertStatusLogs(2, "TRUNCATED", "TRUNCATED STAGING ERROR");
+//            23.Them loi vao log
+            handleConfig.insertStatusLogs(2, "ERROR", e.getMessage());
+//            24.Cho flag = 0
+            handleConfig.updateFlagConfig(2, 0);
+//            25. Cập nhật giá trị processing = 0
+            handleConfig.updateProcessingConfigs(2, 0);
             e.printStackTrace(); // Bắt mọi loại ngoại lệ khác
         } finally {
-            handleConfig.insertStatusLogs(2, "IMPORT TO STAGING", "FINISH");
+//            18.Thêm thông tin ddang load dữ liệu vào Staging
+            handleConfig.insertStatusLogs(2, "EXTRACTING", "IMPORT TO STAGING");
+//            19.Cập nhật status của config thành EXTRACTED
+            handleConfig.updateStatusConfigs(2, "EXTRACTED");
+//            20.Thêm thông tin đã load dữ liệu vào Staging
+            handleConfig.insertStatusLogs(2, "EXTRACTED", "IMPORTED TO STAGING");
+//            21.Cập nhật giá trị processing là 0
+            handleConfig.updateProcessingConfigs(2, 0);
+
         }
     }
 
