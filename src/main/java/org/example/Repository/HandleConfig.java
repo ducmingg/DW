@@ -16,6 +16,12 @@ public class HandleConfig {
         this.conn = ConnectionDB.getConnection();
     }
 
+
+    public Connection getConn() {
+        return conn;
+    }
+
+
     public void loadToStaging() {
         String pathFile = null; // Khai báo biến pathFile
         String sql = "SELECT * FROM configs where id = 1";
@@ -59,7 +65,7 @@ public class HandleConfig {
 
 
     public List<Config> getConfig() {
-        String sql = "select * from configs where flag = 1 ORDER BY id DESC";
+        String sql = "select * from configs where flag = 1 ORDER BY id ASC";
         List<Config> configs = new ArrayList<>();
         try (Statement statement = conn.createStatement();
              ResultSet resultSet = statement.executeQuery(sql);
@@ -83,6 +89,20 @@ public class HandleConfig {
             throw new RuntimeException(e);
         }
         return configs;
+    }
+
+    public int countProcessing() {
+        String sql = "SELECT COUNT(*) AS count FROM configs WHERE is_processing = 1";
+        try (Statement statement = conn.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+            if (resultSet.next()) {
+                return resultSet.getInt("count"); // Lấy giá trị của cột "count" từ kết quả
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+        return 0; // Trả về 0 nếu không có dòng nào hoặc xảy ra lỗi
     }
 
     public void truncateStaging() {
@@ -174,9 +194,19 @@ public class HandleConfig {
         }
     }
 
+    public void loadToLocationDim() {
+        try (CallableStatement statement = conn.prepareCall("{CALL import_to_date_dim()}")) {
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public static void main(String[] args) {
+        Connection conn = ConnectionDB.getConnection();
         HandleConfig handleConfig = new HandleConfig();
-        handleConfig.loadToDateDim();
+        System.out.println(handleConfig.getConfig());
     }
 }

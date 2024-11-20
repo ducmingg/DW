@@ -1,5 +1,6 @@
 package org.example.Controller;
 
+import org.example.Connection.ConnectionDB;
 import org.example.Entity.Config;
 import org.example.Entity.Provinces;
 import org.example.Repository.HandleConfig;
@@ -7,16 +8,21 @@ import org.example.Services.DataWeather;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Controller {
 
     public void crawlData() {
+//        12.load cac thuoc tinh trong properties va ket noi den database control
         HandleConfig handleConfig = new HandleConfig();
         try {
+//            13.Cập nhật  trạng thái của config
             handleConfig.updateProcessingConfigs(1, 1);
+//            14.Cập nhật status của config thành CRAWLING
             handleConfig.updateStatusConfigs(1, "CRAWLING");
+//            15. Thêm thông tin đang craw dữ liệu vào log
             handleConfig.insertStatusLogs(1, "CRAWLING", "Start crawling weather data");
             Config config = handleConfig.getConfig().get(0);
             String[] provinces = Provinces.getProvinces();
@@ -26,18 +32,26 @@ public class Controller {
             String file_name = config.getFile_name();
             String path = directory + file_name + dt_now.format(now) + ".csv";
             File file = new File(path);
+//            16. Tạo file csv dể lưu trữ dữ liệu lấy từ API
             file.createNewFile();
+//            17. Duyệt các thành phố
             for (String province : provinces
             ) {
+//                18.Kết nối URL với citi muốn lấy dữ liệu
                 DataWeather dw = new DataWeather(province, path);
+//                19. Lấy dữ liệu Json từ API
                 dw.saveToCsv(path);
             }
+//            27. Cập nhật đường dẫn chi tiết của file CSV
             handleConfig.updateFilePathConfigs(1, path);
+//            28. Cập nhật status của config thành CRAWLED
             handleConfig.insertStatusLogs(1, "CRAWLED", "CRAWL HOAN THANH");
         } catch (Exception e) {
+//            20. Thêm thông tin lỗi khi lấy dữ liệu của thành phố đó vào log
             handleConfig.insertStatusLogs(1, "ERROR", e.getMessage());
             e.printStackTrace(); // Bắt mọi loại ngoại lệ khác
         } finally {
+//            29. Thêm thông tin đã crawl dữ liệu vào log
             handleConfig.insertStatusLogs(1, "CRAWLED", "FINISH");
         }
 
@@ -80,7 +94,7 @@ public class Controller {
         }
     }
 
-    
+
     public static void main(String[] args) throws IOException {
         Controller controller = new Controller();
         controller.crawlData();

@@ -49,6 +49,7 @@ public class DataWeather {
     public void saveToCsv(String path) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         // chuyen json => map(string : obj)
+
         Map<String, Object> datas = mapper.readValue(getDataWeather().toString(), new TypeReference<Map<String, Object>>() {
         });
 
@@ -57,10 +58,8 @@ public class DataWeather {
         List<Map<String, Object>> days = (List<Map<String, Object>>) datas.get("days");
         try (CSVWriter writer = new CSVWriter(new FileWriter(path, true))) {
             if (!file.exists() || file.length() == 0) {
-
                 writer.writeNext(header);
             }
-//            writer.writeNext(header);
             String name = datas.get("resolvedAddress").toString();
             for (Map<String, Object> day : days
             ) {
