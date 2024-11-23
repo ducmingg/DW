@@ -219,5 +219,6 @@ public class HandleConfig {
         Connection conn = ConnectionDB.getConnection();
         HandleConfig handleConfig = new HandleConfig();
         System.out.println(handleConfig.getConfig());
+        handleConfig.updateProcessingConfigs(1, 0);
     }
 }

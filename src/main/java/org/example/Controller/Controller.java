@@ -45,7 +45,7 @@ public class Controller {
 //            27. Cập nhật đường dẫn chi tiết của file CSV
             handleConfig.updateFilePathConfigs(1, path);
 //            28. Cập nhật status của config thành CRAWLED
-            handleConfig.updateStatusConfigs(1, "CRAWLED");
+            handleConfig.updateStatusConfigs(1, "FINISHED");
         } catch (Exception e) {
 //            20+23. Thêm thông tin lỗi  vào log
             handleConfig.insertStatusLogs(1, "ERROR", e.getMessage());

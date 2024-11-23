@@ -24,7 +24,7 @@ public class Extract {
                 while (handleConfig.countProcessing() != 0 && maxWait <= 3) {
                     System.out.println("Waiting...");
                     maxWait++;
-                    Thread.sleep(60000);
+                    Thread.sleep(2000);
                 }
 //            9.Kiểm tra xem còn processing nào đang chạy không
                 if (handleConfig.countProcessing() == 0) {
