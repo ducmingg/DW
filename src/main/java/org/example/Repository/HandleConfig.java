@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HandleConfig {
-    private Connection conn;
+     private Connection conn;
 
     public HandleConfig() {
         this.conn = ConnectionDB.getConnection();
@@ -62,7 +62,13 @@ public class HandleConfig {
             throw new RuntimeException("Error executing query: " + e.getMessage(), e);
         }
     }
+   public void loadDataToDataMart(){
+        try(CallableStatement statement = conn.prepareCall("{Call LoadToDM}")){
 
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+   }
 
     public List<Config> getConfig() {
         String sql = "select * from configs where flag = 1 ORDER BY id ASC";
@@ -147,6 +153,39 @@ public class HandleConfig {
             throw new RuntimeException(e);
         }
     }
+//    public static void setFlagIsZero(Connection conn,int id){
+//        try (CallableStatement statement = conn.prepareCall("{CALL SetFlagIsZero(?)}")) {
+//            System.out.println("setFlagIsZero");
+//            statement.setInt(1, id);
+//            statement.execute();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+public static List<String> getLogs(Connection connection, int idConfig) {
+    List<String> logs = new ArrayList<>();
+    //Câu select lấy list config muốn run
+    String query = "SELECT * FROM log WHERE id_config = ? ORDER BY created_at ASC";
+    try {
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setInt(1, idConfig);
+        ResultSet resultSet = statement.executeQuery();
+        int i = 1;
+        while (resultSet.next()) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(i++ + ". ");
+            stringBuilder.append("ID Config: " + resultSet.getInt("id_config"));
+            stringBuilder.append(". Status: " + resultSet.getString("status"));
+            stringBuilder.append(". Description: " + resultSet.getString("description"));
+            stringBuilder.append("Time: " + resultSet.getTimestamp("created_at").toString());
+            logs.add(stringBuilder.toString());
+        }
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
+    return logs;
+}
+
 
     public void insertStatusLogs(int id, String status, String description) {
         try (CallableStatement statement = conn.prepareCall("{CALL insert_status_logs(?,?,?)}")) {
@@ -184,6 +223,7 @@ public class HandleConfig {
             throw new RuntimeException(e);
         }
     }
+
 
     public void updateFilePathConfigs(int id, String path_file) {
         try (CallableStatement statement = conn.prepareCall("{CALL update_file_path_configs(?,?)}")) {
