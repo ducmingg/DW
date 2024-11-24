@@ -5,12 +5,16 @@ import org.example.Entity.Config;
 import org.example.Entity.Provinces;
 import org.example.Repository.HandleConfig;
 import org.example.Services.DataWeather;
-
+import java.sql.Connection;
 import java.io.File;
 import java.io.IOException;
+import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+
 
 public class Controller {
 
@@ -101,6 +105,56 @@ public class Controller {
             handleConfig.insertStatusLogs(2, "EXTRACTED", "IMPORTED TO STAGING");
 //            21.Cập nhật giá trị processing là 0
             handleConfig.updateProcessingConfigs(2, 0);
+
+        }
+    }
+    public void loadToDatamart(Config config){
+        HandleConfig handleConfig = new HandleConfig();
+        try{
+    //      12 cap nhat trang thai cua config la dang xu ly (isProcessing = true)
+            handleConfig.updateProcessingConfigs(config.getId(),1);
+    //        13  Cap nhat status cua config thanh MLOADING (status = MLOADING)
+            handleConfig.updateStatusConfigs(config.getId(),"MLOADING");
+    //        14. them thong tin bat dau load to datamart vao log
+            handleConfig.insertStatusLogs(config.getId(), "MLOADING", "Strar load data to Datamart");
+    //        15. Load Data To Datamart
+            handleConfig.loadDataToDataMart();
+    //            16 cap nhat trang thai status cua config thanh MLOADED
+                handleConfig.updateStatusConfigs(config.getId(), "MLOADED");
+    //            17. Thêm thông tin đã load data to datamart vào log
+                handleConfig.insertStatusLogs(config.getId(), "MLOADED", "Load to mart success");
+                System.out.println("load to mart success");
+    //            18. Cập nhật status của config thành FINISHED
+                handleConfig.updateStatusConfigs(config.getId(), "FINISHED");
+    //            19. Thêm thông tin đã hoàn thành tiến trình vào log
+                handleConfig.insertStatusLogs(config.getId(), " FINISHED", "Finished");
+    //            20. Chỉnh Flag=0 cho config
+                handleConfig.updateFlagConfig(config.getId(), 0);
+    //            21. Cập nhật trạng thái của config là không xử lý (isProcessing=false)
+                handleConfig.updateProcessingConfigs(config.getId(), 0);
+    //            22. Send mail thông báo tiến trình hoàn tất cho email của author
+    //            String mail = config.getEmail();
+    //            DateTimeFormatter dt = DateTimeFormatter.ofPattern("hh:mm:ss dd/MM/yyyy");
+    //            LocalDateTime nowTime = LocalDateTime.now();
+    //            String timeNow = nowTime.format(dt);
+    //            String subject = "Success DataWarehouse Date: " + timeNow;
+    //            String message = "Success";
+    //            String pathLogs = createFIleLog( handleConfig.getLogs(connection, config.getId()));
+    //            if(pathLogs!=null){
+    //                SendMail.sendMail(mail, subject, message, pathLogs);
+    //            }
+    //            else SendMail.sendMail(mail, subject, message);
+        } catch (Exception e) {
+//           23. Cập nhật status của config thành ERROR
+            handleConfig.updateStatusConfigs(config.getId(),"ERROR");
+//            24. Thêm lỗi vào log
+            handleConfig.insertStatusLogs(config.getId(), "ERROR", e.getMessage());
+//           25. Chỉnh Flag=0 cho config
+            handleConfig.updateFlagConfig(config.getId(), 0);
+//            26.Cập nhật trạng thái của config là không xử lý (isProcessing=false)
+            handleConfig.updateProcessingConfigs(config.getId(), 0);
+//            27. Send mail thông báo lỗi cho email của author
+            throw new RuntimeException(e);
 
         }
     }
