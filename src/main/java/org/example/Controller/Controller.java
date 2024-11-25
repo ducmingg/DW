@@ -57,6 +57,10 @@ public class Controller {
             handleConfig.updateProcessingConfigs(1, 0);
             e.printStackTrace(); // Bắt mọi loại ngoại lệ khác
         } finally {
+//            25. Cập nhật is_processing của config la 0
+            handleConfig.updateProcessingConfigs(1, 0);
+//            28. Cập nhật status của config thành CRAWLED
+            handleConfig.updateStatusConfigs(1, "FINISHED");
 //            29. Thêm thông tin đã crawl dữ liệu vào log
             handleConfig.insertStatusLogs(1, "CRAWLED", "FINISH");
         }
