@@ -205,8 +205,8 @@ public class HandleConfig {
         }
     }
 
-    public void loadToLocationDim() {
-        try (CallableStatement statement = conn.prepareCall("{CALL import_to_date_dim()}")) {
+    public void transform_location_dim() {
+        try (CallableStatement statement = conn.prepareCall("{CALL staging.transform_location_dim()}")) {
             statement.execute();
         } catch (SQLException e) {
             System.out.println(e);
@@ -214,11 +214,41 @@ public class HandleConfig {
         }
     }
 
+    public void type2() {
+        try (CallableStatement statement = conn.prepareCall("{CALL warehouse.type2()}")) {
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void transformStaging() {
+        // Danh sách các stored procedures cần gọi
+        String[] procedures = {
+                "staging.transform_location_dim",
+                "staging.transform_time_dim",
+                "staging.transform_date_dim",
+                "staging.transform_weather_dim"
+        };
+
+        for (String procedure : procedures) {
+            try (CallableStatement statement = conn.prepareCall("{CALL " + procedure + "() }")) {
+                statement.execute();
+                System.out.println(procedure + " executed successfully.");
+            } catch (SQLException e) {
+                System.err.println("Error executing procedure " + procedure + ": " + e.getMessage());
+                throw new RuntimeException(e); // Ném ra exception nếu có lỗi
+            }
+        }
+    }
 
     public static void main(String[] args) {
         Connection conn = ConnectionDB.getConnection();
         HandleConfig handleConfig = new HandleConfig();
-        System.out.println(handleConfig.getConfig());
-        handleConfig.updateProcessingConfigs(1, 0);
+//        System.out.println(handleConfig.getConfig());
+//        handleConfig.transform_location_dim();
+//        handleConfig.type2();
+        handleConfig.transformStaging();
     }
 }

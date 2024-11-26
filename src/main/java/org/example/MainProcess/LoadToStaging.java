@@ -29,7 +29,7 @@ public class LoadToStaging {
 //                10.Lay ra status cua config do
                     String status = config.getStatus();
 //                    11.Kiểm tra xem status có phải là OFF hay FINISHED hay không
-                    if (status.equals("FINISHED")) {
+                    if (status.equals("CRAWLED")) {
                         controller.loadToStaging();
                     }
                     System.out.println("End");

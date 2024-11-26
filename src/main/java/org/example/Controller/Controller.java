@@ -42,12 +42,19 @@ public class Controller {
 //                19. Lấy dữ liệu Json từ API
                 dw.saveToCsv(path);
             }
+//            25. Cập nhật is_processing của config la 0
+            handleConfig.updateProcessingConfigs(1, 0);
+//            26.Mail
+
 //            27. Cập nhật đường dẫn chi tiết của file CSV
             handleConfig.updateFilePathConfigs(1, path);
 //            28. Cập nhật status của config thành CRAWLED
-            handleConfig.updateStatusConfigs(1, "FINISHED");
+            handleConfig.updateStatusConfigs(1, "CRAWLED");
+//            29. Thêm thông tin đã crawl dữ liệu vào log
+            handleConfig.insertStatusLogs(1, "CRAWLED", "FINISH");
+
         } catch (Exception e) {
-//            20+23. Thêm thông tin lỗi  vào log
+//            20+21(mail)+23. Thêm thông tin lỗi  vào log
             handleConfig.insertStatusLogs(1, "ERROR", e.getMessage());
 //            22. Cập nhật status của config thành ERROR
             handleConfig.updateStatusConfigs(1, "ERROR");
@@ -56,19 +63,10 @@ public class Controller {
 //            25. Cập nhật is_processing của config la 0
             handleConfig.updateProcessingConfigs(1, 0);
             e.printStackTrace(); // Bắt mọi loại ngoại lệ khác
-        } finally {
-//            25. Cập nhật is_processing của config la 0
-            handleConfig.updateProcessingConfigs(1, 0);
-//            28. Cập nhật status của config thành CRAWLED
-            handleConfig.updateStatusConfigs(1, "FINISHED");
-//            29. Thêm thông tin đã crawl dữ liệu vào log
-            handleConfig.insertStatusLogs(1, "CRAWLED", "FINISH");
         }
-
     }
 
     public void loadToStaging() {
-
         HandleConfig handleConfig = new HandleConfig();
         try {
 //        12.Cập nhật  trạng thái của config là đang xử lý (isProcessing=true)
@@ -105,7 +103,8 @@ public class Controller {
             handleConfig.insertStatusLogs(2, "EXTRACTED", "IMPORTED TO STAGING");
 //            21.Cập nhật giá trị processing là 0
             handleConfig.updateProcessingConfigs(2, 0);
-
+//            24.Cho flag = 0
+            handleConfig.updateFlagConfig(2, 0);
         }
     }
 
