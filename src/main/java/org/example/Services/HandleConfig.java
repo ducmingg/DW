@@ -1,10 +1,8 @@
-package org.example.Repository;
+package org.example.Services;
 
 import org.example.Connection.ConnectionDB;
 import org.example.Entity.Config;
 
-import java.io.CharArrayReader;
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -229,7 +227,8 @@ public class HandleConfig {
                 "staging.transform_location_dim",
                 "staging.transform_time_dim",
                 "staging.transform_date_dim",
-                "staging.transform_weather_dim"
+                "staging.transform_weather_dim",
+                "warehouse.type2"
         };
 
         for (String procedure : procedures) {
@@ -243,12 +242,33 @@ public class HandleConfig {
         }
     }
 
+    public String getEmailConfig(int id) {
+        String sql = "select email from configs where " + "id = ?";
+        String email = "";
+        try (PreparedStatement statement = conn.prepareStatement(sql);
+        ) {
+            statement.setInt(1, id);
+            try (
+                    ResultSet rs = statement.executeQuery();
+            ) {
+                while (rs.next()) {
+                    email = rs.getString("email");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+        return email;
+    }
+
     public static void main(String[] args) {
         Connection conn = ConnectionDB.getConnection();
         HandleConfig handleConfig = new HandleConfig();
 //        System.out.println(handleConfig.getConfig());
 //        handleConfig.transform_location_dim();
 //        handleConfig.type2();
-        handleConfig.transformStaging();
+//        handleConfig.transformStaging();
+        System.out.println(handleConfig.getEmailConfig(1));
     }
 }

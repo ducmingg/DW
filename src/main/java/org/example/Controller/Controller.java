@@ -1,14 +1,12 @@
 package org.example.Controller;
 
-import org.example.Connection.ConnectionDB;
 import org.example.Entity.Config;
 import org.example.Entity.Provinces;
-import org.example.Repository.HandleConfig;
+import org.example.Services.HandleConfig;
 import org.example.Services.DataWeather;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 

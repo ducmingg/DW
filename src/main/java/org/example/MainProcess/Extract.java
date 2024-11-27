@@ -1,11 +1,9 @@
 package org.example.MainProcess;
 
-import org.example.Connection.ConnectionDB;
 import org.example.Controller.Controller;
 import org.example.Entity.Config;
-import org.example.Repository.HandleConfig;
+import org.example.Services.HandleConfig;
 
-import java.sql.Connection;
 import java.util.List;
 
 public class Extract {
