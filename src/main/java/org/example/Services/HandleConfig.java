@@ -245,6 +245,24 @@ public class HandleConfig {
         }
     }
 
+
+    public void loadToDataMart() {
+        String[] procedures = {
+                "warehouse.transform_datamart",
+                "datamart.SwapForecastTables"
+        };
+
+        for (String procedure : procedures) {
+            try (CallableStatement statement = conn.prepareCall("{CALL " + procedure + "() }")) {
+                statement.execute();
+                System.out.println(procedure + " executed successfully.");
+            } catch (SQLException e) {
+                System.err.println("Error executing procedure " + procedure + ": " + e.getMessage());
+                throw new RuntimeException(e); // Ném ra exception nếu có lỗi
+            }
+        }
+    }
+
     public String getEmailConfig(int id) {
         String sql = "select email from configs where " + "id = ?";
         String email = "";
