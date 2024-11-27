@@ -158,6 +158,9 @@ public class Controller {
 
     public void loadToDataMart() {
         HandleConfig handleConfig = new HandleConfig();
+        DateTimeFormatter dt = DateTimeFormatter.ofPattern("hh:mm:ss dd/MM/yyyy");
+        LocalDateTime nowTime = LocalDateTime.now();
+        String timeNow = nowTime.format(dt);
         try {
 //        12.Cập nhật  trạng thái của config là đang xử lý (isProcessing=true)
             handleConfig.updateProcessingConfigs(4, 1);
@@ -174,12 +177,9 @@ public class Controller {
 //            18. Cập nhật status của config thành FINISHED
             handleConfig.updateStatusConfigs(1, "FINISHED");
 //            19. Thêm thông tin đã hoàn thành tiến trình vào log
-            handleConfig.insertStatusLogs(4, "FINISHED", "Finished");
+            handleConfig.insertStatusLogs(4, "FINISHED", "Finished: DataWarehouse Date:" + timeNow);
 //            22.send mail error
             try {
-                DateTimeFormatter dt = DateTimeFormatter.ofPattern("hh:mm:ss dd/MM/yyyy");
-                LocalDateTime nowTime = LocalDateTime.now();
-                String timeNow = nowTime.format(dt);
                 handleConfig.sendMail(4, "Success DataWarehouse Date: " + timeNow);
             } catch (MessagingException ex) {
                 throw new RuntimeException(ex);

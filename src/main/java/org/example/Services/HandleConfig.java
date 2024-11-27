@@ -137,7 +137,6 @@ public class HandleConfig {
 
     public void updateProcessingConfigs(int id, int processing) {
         try (CallableStatement statement = conn.prepareCall("{CALL update_isProcessing_configs(?,?)}")) {
-            System.out.println("updateProcessing");
             statement.setInt(1, id);
             statement.setInt(2, processing);
             statement.execute();
@@ -289,6 +288,25 @@ public class HandleConfig {
         sendEmail.sendMail(recipient, msg);
     }
 
+    public boolean checkStatus(int id, String status) {
+        String sql = "select status from configs where " + "id = ?";
+        String stt = "";
+        try (PreparedStatement statement = conn.prepareStatement(sql);
+        ) {
+            statement.setInt(1, id);
+            try (
+                    ResultSet rs = statement.executeQuery();
+            ) {
+                while (rs.next()) {
+                    stt = rs.getString("status");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+        return stt.equals(status);
+    }
 
     public static void main(String[] args) {
         Connection conn = ConnectionDB.getConnection();
@@ -297,6 +315,8 @@ public class HandleConfig {
 //        handleConfig.transform_location_dim();
 //        handleConfig.type2();
 //        handleConfig.transformStaging();
-        System.out.println(handleConfig.getEmailConfig(1));
+//        System.out.println(handleConfig.getEmailConfig(1));
+        System.out.println(handleConfig.checkStatus(1, "FINISHED1"));
     }
+
 }

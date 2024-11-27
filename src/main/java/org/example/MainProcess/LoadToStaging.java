@@ -18,11 +18,11 @@ public class LoadToStaging {
             for (Config config : configs) {
                 int maxWait = 0;
 //        7. Khi có processing nào chạy và thời gian dưới 3 phút
-//                while (handleConfig.countProcessing() != 0 && maxWait <= 3) {
-//                    System.out.println("Waiting...");
-//                    maxWait++;
-//                    Thread.sleep(60000);
-//                }
+                while (handleConfig.countProcessing() != 0 && maxWait <= 3) {
+                    System.out.println("Waiting...");
+                    maxWait++;
+                    Thread.sleep(2000);
+                }
 //            9.Kiểm tra xem còn processing nào đang chạy không
                 if (handleConfig.countProcessing() == 0) {
                     System.out.println("Start");
