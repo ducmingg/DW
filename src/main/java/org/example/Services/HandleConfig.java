@@ -222,7 +222,7 @@ public class HandleConfig {
         }
     }
 
-    public void transformStaging() {
+    public void transform() {
         // Danh sách các stored procedures cần gọi
         String[] procedures = {
                 "staging.transform_location_dim",
