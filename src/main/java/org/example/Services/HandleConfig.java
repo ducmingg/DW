@@ -1,10 +1,9 @@
-package org.example.Repository;
+package org.example.Services;
 
+import jakarta.mail.MessagingException;
 import org.example.Connection.ConnectionDB;
 import org.example.Entity.Config;
 
-import java.io.CharArrayReader;
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -138,7 +137,6 @@ public class HandleConfig {
 
     public void updateProcessingConfigs(int id, int processing) {
         try (CallableStatement statement = conn.prepareCall("{CALL update_isProcessing_configs(?,?)}")) {
-            System.out.println("updateProcessing");
             statement.setInt(1, id);
             statement.setInt(2, processing);
             statement.execute();
@@ -223,13 +221,16 @@ public class HandleConfig {
         }
     }
 
-    public void transformStaging() {
+    public void loadToWarehouse() {
         // Danh sách các stored procedures cần gọi
         String[] procedures = {
                 "staging.transform_location_dim",
+                "warehouse.type2",
                 "staging.transform_time_dim",
                 "staging.transform_date_dim",
-                "staging.transform_weather_dim"
+                "staging.transform_weather_dim",
+                "staging.transform_weather_fact",
+                "warehouse.transform_aggregate",
         };
 
         for (String procedure : procedures) {
@@ -243,12 +244,79 @@ public class HandleConfig {
         }
     }
 
+
+    public void loadToDataMart() {
+        String[] procedures = {
+                "warehouse.transform_datamart",
+                "datamart.SwapForecastTables"
+        };
+
+        for (String procedure : procedures) {
+            try (CallableStatement statement = conn.prepareCall("{CALL " + procedure + "() }")) {
+                statement.execute();
+                System.out.println(procedure + " executed successfully.");
+            } catch (SQLException e) {
+                System.err.println("Error executing procedure " + procedure + ": " + e.getMessage());
+                throw new RuntimeException(e); // Ném ra exception nếu có lỗi
+            }
+        }
+    }
+
+    public String getEmailConfig(int id) {
+        String sql = "select email from configs where " + "id = ?";
+        String email = "";
+        try (PreparedStatement statement = conn.prepareStatement(sql);
+        ) {
+            statement.setInt(1, id);
+            try (
+                    ResultSet rs = statement.executeQuery();
+            ) {
+                while (rs.next()) {
+                    email = rs.getString("email");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+        return email;
+    }
+
+    public void sendMail(int id, String msg) throws MessagingException {
+        SendEmail sendEmail = new SendEmail();
+        String recipient = getEmailConfig(id);
+        sendEmail.sendMail(recipient, msg);
+    }
+
+    public boolean checkStatus(int id, String status) {
+        String sql = "select status from configs where " + "id = ?";
+        String stt = "";
+        try (PreparedStatement statement = conn.prepareStatement(sql);
+        ) {
+            statement.setInt(1, id);
+            try (
+                    ResultSet rs = statement.executeQuery();
+            ) {
+                while (rs.next()) {
+                    stt = rs.getString("status");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+        return stt.equals(status);
+    }
+
     public static void main(String[] args) {
         Connection conn = ConnectionDB.getConnection();
         HandleConfig handleConfig = new HandleConfig();
 //        System.out.println(handleConfig.getConfig());
 //        handleConfig.transform_location_dim();
 //        handleConfig.type2();
-        handleConfig.transformStaging();
+//        handleConfig.transformStaging();
+//        System.out.println(handleConfig.getEmailConfig(1));
+        System.out.println(handleConfig.checkStatus(1, "FINISHED1"));
     }
+
 }

@@ -7,9 +7,9 @@ import jakarta.mail.internet.*;
 
 public class SendEmail {
 
-    void sendMail(String text) throws MessagingException {
+    void sendMail(String recipient, String text) throws MessagingException {
         // Recipient's email ID needs to be mentioned.
-        String to = "21130447@st.hcmuaf.edu.vn";
+        String to = recipient;
         // Sender's email ID needs to be mentioned
         String from = "voducminh39@gmail.com";
         final String username = "voducminh39@gmail.com";
@@ -50,6 +50,6 @@ public class SendEmail {
 
     public static void main(String[] args) throws MessagingException {
         SendEmail s = new SendEmail();
-        s.sendMail("TEST MAIL");
+//        s.sendMail("TEST MAIL");
     }
 }
