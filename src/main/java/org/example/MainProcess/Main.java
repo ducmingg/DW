@@ -38,19 +38,22 @@ public class Main {
                         controller.crawlData();
                         System.out.println("END: CRAWL");
                         System.out.println("********************************************************************");
-                    } else if (status.equals("CRAWLED")) {
+//                    } else if (status.equals("CRAWLED")) {
+                    } else if (handleConfig.checkStatus(config.getId() - 1, "CRAWLED")) {
                         System.out.println("START: LOAD TO STAGING");
                         System.out.println("CONFIG:" + status);
                         controller.loadToStaging();
                         System.out.println("END: LOAD TO STAGING");
                         System.out.println("********************************************************************");
-                    } else if (status.equals("EXTRACTED")) {
+//                    } else if (status.equals("EXTRACTED")) {
+                    } else if (handleConfig.checkStatus(config.getId() - 1, "EXTRACTED")) {
                         System.out.println("START: LOAD TO WAREHOUSE");
                         System.out.println("CONFIG:" + status);
                         controller.loadToWarehouse();
                         System.out.println("END LOAD TO WAREHOUSE");
                         System.out.println("********************************************************************");
-                    } else if (status.equals("WH_LOADED")) {
+//                    } else if (status.equals("WH_LOADED")) {
+                    } else if (handleConfig.checkStatus(config.getId() - 1, "WH_LOADED")) {
                         System.out.println("START: LOAD TO DATAMART");
                         System.out.println("CONFIG:" + status);
                         controller.loadToDataMart();
