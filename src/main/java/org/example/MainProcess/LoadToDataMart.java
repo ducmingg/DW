@@ -25,14 +25,14 @@ public class LoadToDataMart {
                 }
 //            9.Kiểm tra xem còn processing nào đang chạy không
                 if (handleConfig.countProcessing() == 0) {
-                    System.out.println("Start Load to DataMart");
 //                10.Lay ra status cua config do
                     String status = config.getStatus();
 //                    11.Kiểm tra xem status có phải là OFF hay FINISHED hay không
-                    if (status.equals("WH_LOADED")) {
+                    if (handleConfig.checkStatus(config.getId() - 1, "WH_LOADED")) {
+                        System.out.println("START: LOAD TO DATAMART");
                         controller.loadToDataMart();
+                        System.out.println("END: LOAD TO DATAMART");
                     }
-                    System.out.println("End Load to DataMart");
                 }
             }
             //6. close db connection

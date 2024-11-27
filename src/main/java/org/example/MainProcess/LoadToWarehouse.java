@@ -25,14 +25,14 @@ public class LoadToWarehouse {
                 }
 //            9.Kiểm tra xem còn processing nào đang chạy không
                 if (handleConfig.countProcessing() == 0) {
-                    System.out.println("Start");
 //                10.Lay ra status cua config do
                     String status = config.getStatus();
 //                    11.Kiểm tra xem status có phải là OFF hay FINISHED hay không
-                    if (status.equals("EXTRACTED")) {
+                    if (handleConfig.checkStatus(config.getId() - 1, "EXTRACTED")) {
+                        System.out.println("START: LOAD TO WAREHOUSE");
                         controller.loadToWarehouse();
+                        System.out.println("END LOAD TO WAREHOUSE");
                     }
-                    System.out.println("End");
                 }
             }
             //6. close db connection
