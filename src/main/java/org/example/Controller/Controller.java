@@ -1,5 +1,6 @@
 package org.example.Controller;
 
+import jakarta.mail.MessagingException;
 import org.example.Entity.Config;
 import org.example.Entity.Provinces;
 import org.example.Services.HandleConfig;
@@ -42,8 +43,6 @@ public class Controller {
             }
 //            25. Cập nhật is_processing của config la 0
             handleConfig.updateProcessingConfigs(1, 0);
-//            26.Mail
-
 //            27. Cập nhật đường dẫn chi tiết của file CSV
             handleConfig.updateFilePathConfigs(1, path);
 //            28. Cập nhật status của config thành CRAWLED
@@ -52,8 +51,14 @@ public class Controller {
             handleConfig.insertStatusLogs(1, "CRAWLED", "FINISH");
 
         } catch (Exception e) {
-//            20+21(mail)+23. Thêm thông tin lỗi  vào log
+//            20+23. Thêm thông tin lỗi  vào log
             handleConfig.insertStatusLogs(1, "ERROR", e.getMessage());
+//            21+26.send mail error
+            try {
+                handleConfig.sendMail(1, e.getMessage());
+            } catch (MessagingException ex) {
+                throw new RuntimeException(ex);
+            }
 //            22. Cập nhật status của config thành ERROR
             handleConfig.updateStatusConfigs(1, "ERROR");
 //            24. Chỉnh Flag=0 cho config

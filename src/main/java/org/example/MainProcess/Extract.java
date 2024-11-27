@@ -8,8 +8,7 @@ import java.util.List;
 
 public class Extract {
     public static void main(String[] args) throws InterruptedException {
-//        2+3.load cac thuoc tinh trong properties va ket noi den database control
-//        Connection conn = ConnectionDB.getConnection();
+//        1+2+3.load cac thuoc tinh trong properties va ket noi den database control
         HandleConfig handleConfig = new HandleConfig();
         Controller controller = new Controller();
         try {

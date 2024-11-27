@@ -1,5 +1,6 @@
 package org.example.Services;
 
+import jakarta.mail.MessagingException;
 import org.example.Connection.ConnectionDB;
 import org.example.Entity.Config;
 
@@ -260,6 +261,12 @@ public class HandleConfig {
             throw new RuntimeException(e);
         }
         return email;
+    }
+
+    public void sendMail(int id, String msg) throws MessagingException {
+        SendEmail sendEmail = new SendEmail();
+        String recipient = getEmailConfig(id);
+        sendEmail.sendMail(recipient, msg);
     }
 
     public static void main(String[] args) {
