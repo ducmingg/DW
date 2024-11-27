@@ -222,14 +222,16 @@ public class HandleConfig {
         }
     }
 
-    public void transform() {
+    public void loadToWarehouse() {
         // Danh sách các stored procedures cần gọi
         String[] procedures = {
                 "staging.transform_location_dim",
+                "warehouse.type2",
                 "staging.transform_time_dim",
                 "staging.transform_date_dim",
                 "staging.transform_weather_dim",
-                "warehouse.type2"
+                "staging.transform_weather_fact",
+                "warehouse.transform_aggregate",
         };
 
         for (String procedure : procedures) {
@@ -268,6 +270,7 @@ public class HandleConfig {
         String recipient = getEmailConfig(id);
         sendEmail.sendMail(recipient, msg);
     }
+
 
     public static void main(String[] args) {
         Connection conn = ConnectionDB.getConnection();

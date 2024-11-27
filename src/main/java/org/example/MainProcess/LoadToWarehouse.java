@@ -6,7 +6,7 @@ import org.example.Services.HandleConfig;
 
 import java.util.List;
 
-public class Transform {
+public class LoadToWarehouse {
     public static void main(String[] args) throws InterruptedException {
 //        1+2+3.load cac thuoc tinh trong properties va ket noi den database control
         HandleConfig handleConfig = new HandleConfig();
@@ -30,7 +30,7 @@ public class Transform {
                     String status = config.getStatus();
 //                    11.Kiểm tra xem status có phải là OFF hay FINISHED hay không
                     if (status.equals("EXTRACTED")) {
-                        controller.tranform();
+                        controller.loadToWarehouse();
                     }
                     System.out.println("End");
                 }
