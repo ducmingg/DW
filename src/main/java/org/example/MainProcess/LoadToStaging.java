@@ -8,7 +8,7 @@ import java.util.List;
 
 public class LoadToStaging {
     public static void main(String[] args) {
-//        2+3.load cac thuoc tinh trong properties va ket noi den database control
+//        1+2+3.load cac thuoc tinh trong properties va ket noi den database control
         HandleConfig handleConfig = new HandleConfig();
         Controller controller = new Controller();
         try {

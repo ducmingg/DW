@@ -40,7 +40,5 @@ public class Extract {
         } catch (Exception e) {
             throw new InterruptedException();
         }
-
-
     }
 }
