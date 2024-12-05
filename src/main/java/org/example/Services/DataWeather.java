@@ -105,7 +105,7 @@ public class DataWeather {
 
     private String getValueOrDefault(Map<String, Object> map, String key) {
         Object value = map.get(key);
-        return value != null ? value.toString() : "null";
+        return value != null ? value.toString() : "None";
     }
 
 

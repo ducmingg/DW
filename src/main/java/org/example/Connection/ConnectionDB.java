@@ -1,7 +1,11 @@
 package org.example.Connection;
 
+import org.example.Api.Api;
+
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -12,10 +16,13 @@ public class ConnectionDB {
 
     public static Connection getConnection() {
         Properties properties = new Properties();
-        try (FileInputStream fis = new FileInputStream("src/main/resources/config.properties")) {
-            properties.load(fis);
+        try (InputStream inputStream = Api.class.getClassLoader().getResourceAsStream("config.properties")) {
+            if (inputStream == null) {
+                throw new FileNotFoundException("File config.properties not found in classpath");
+            }
+            properties.load(inputStream);
         } catch (IOException e) {
-            System.out.println(e);
+            System.out.println("Error loading config.properties: " + e.getMessage());
             e.printStackTrace();
         }
         String urlBase = properties.getProperty("urlBase");
