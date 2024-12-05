@@ -78,6 +78,32 @@ public class HandleConfig {
         return configs;
     }
 
+    public List<Map<String, Object>> getAllConfigs() {
+        String sql = "{CALL getAllConfigs()}";
+        List<Map<String, Object>> configs = new ArrayList<>();
+
+        try (CallableStatement callableStatement = conn.prepareCall(sql);
+             ResultSet resultSet = callableStatement.executeQuery()) {
+
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            while (resultSet.next()) {
+                Map<String, Object> row = new HashMap<>();
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object value = resultSet.getObject(i);
+                    row.put(columnName, value);
+                }
+                configs.add(row);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+
+        return configs;
+    }
 
     public int countProcessing() {
         String sql = "{CALL countProcessing()}";
@@ -124,6 +150,14 @@ public class HandleConfig {
         executeProcedure("update_flag_configs_warehouse_to_1");
     }
 
+    public void updateFlagConfigsSDatamartTo1() {
+        executeProcedure("update_flag_configs_datamart_to_1");
+    }
+
+    public void updateFlagConfigsSDatamartTo0() {
+        executeProcedure("update_flag_configs_datamart_to_0");
+    }
+
     //    update status config
     public void updateStatusConfigsExtractToCrawling() {
         executeProcedure("update_status_configs_extract_to_crawling");
@@ -135,6 +169,10 @@ public class HandleConfig {
 
     public void updateStatusConfigsExtractToCrawled() {
         executeProcedure("update_status_configs_extract_to_crawled");
+    }
+
+    public void updateStatusConfigsExtractToFinished() {
+        executeProcedure("update_status_configs_extract_to_finished");
     }
 
     public void updateStatusConfigsStagingToExtracted() {
@@ -160,6 +198,18 @@ public class HandleConfig {
 
     public void updateStatusConfigsWarehouseToError() {
         executeProcedure("update_status_configs_warehouse_to_error");
+    }
+
+    public void updateStatusConfigsDatamartToError() {
+        executeProcedure("update_status_configs_datamart_to_error");
+    }
+
+    public void updateStatusConfigsDatamartToMloading() {
+        executeProcedure("update_status_configs_datamart_to_mloading");
+    }
+
+    public void updateStatusConfigsDatamartToMloaded() {
+        executeProcedure("update_status_configs_datamart_to_mloaded");
     }
 
     // =======================================================================================================
@@ -188,10 +238,31 @@ public class HandleConfig {
         executeProcedure("update_isProcessing_configs_warehouse_to_1");
     }
 
+    public void updateProcessingConfigsDatamartTo1() {
+        executeProcedure("update_isProcessing_configs_datamart_to_1");
+    }
+
+    public void updateProcessingConfigsDatamartTo0() {
+        executeProcedure("update_isProcessing_configs_datamart_to_0");
+    }
+
+
     //    =======================================================================================================
 //    insert status
     public void insertStatusLogsExtractCrawling() {
         executeProcedure("insert_status_logs_extract_crawling");
+    }
+
+    public void insertStatusLogsDatamartMloading() {
+        executeProcedure("insert_status_logs_datamart_mloading");
+    }
+
+    public void insertStatusLogsDatamartMloaded() {
+        executeProcedure("insert_status_logs_datamart_mloaded");
+    }
+
+    public void insertStatusLogsDatamartFinished() {
+        executeProcedure("insert_status_logs_datamart_finished");
     }
 
     public void insertStatusLogsExtractError(String err) {
@@ -216,6 +287,16 @@ public class HandleConfig {
 
     public void insertStatusLogsWarehouseError(String err) {
         try (CallableStatement statement = conn.prepareCall("{CALL insert_status_logs_warehouse_error(?)}")) {
+            statement.setString(1, err);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void insertStatusLogsDatamartError(String err) {
+        try (CallableStatement statement = conn.prepareCall("{CALL insert_status_logs_datamart_error(?)}")) {
             statement.setString(1, err);
             statement.execute();
         } catch (SQLException e) {
@@ -381,20 +462,16 @@ public class HandleConfig {
     }
 
     public void loadToDataMart() {
-        String[] procedures = {
-                "warehouse.transform_datamart",
-                "datamart.SwapForecastTables"
-        };
+        transform_datamart_daily();
+        transform_datamart_monthly();
+    }
 
-        for (String procedure : procedures) {
-            try (CallableStatement statement = conn.prepareCall("{CALL " + procedure + "() }")) {
-                statement.execute();
-                System.out.println(procedure + " executed successfully.");
-            } catch (SQLException e) {
-                System.err.println("Error executing procedure " + procedure + ": " + e.getMessage());
-                throw new RuntimeException(e); // Ném ra exception nếu có lỗi
-            }
-        }
+    public void transform_datamart_daily() {
+        executeProcedure("transform_datamart_daily");
+    }
+
+    public void transform_datamart_monthly() {
+        executeProcedure("transform_datamart_monthly");
     }
 
     public String getEmailConfig(int id) {
@@ -426,7 +503,7 @@ public class HandleConfig {
         Map<String, Object> config = new HashMap<>();
         if (i == 0) return false;
         if (i > 0) {
-            List<Map<String, Object>> configs = getConfigs();
+            List<Map<String, Object>> configs = getAllConfigs();
             config = configs.get(i - 1);
         }
         return config.get("status").equals(status);
@@ -497,6 +574,24 @@ public class HandleConfig {
 
     public String getRecipientWarehouse() {
         String sql = "{CALL getRecipientWarehouse()}";
+        String result = "";
+
+        try (CallableStatement callableStatement = conn.prepareCall(sql);
+             ResultSet resultSet = callableStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                result = resultSet.getString(1); // Lấy cột đầu tiên (chỉ số 1)
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+
+        return result;
+    }
+
+    public String getRecipientDatamart() {
+        String sql = "{CALL getRecipientDatamart()}";
         String result = "";
 
         try (CallableStatement callableStatement = conn.prepareCall(sql);
@@ -624,7 +719,8 @@ public class HandleConfig {
         Connection conn = ConnectionDB.getConnection();
         HandleConfig handleConfig = new HandleConfig();
 
-        handleConfig.loadToWarehouse();
+        System.out.println(handleConfig.checkStatusBefore(3, "WH_LOADED"));
+        ;
     }
 
 

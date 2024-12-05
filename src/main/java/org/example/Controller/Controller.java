@@ -43,7 +43,7 @@ public class Controller {
                 dw.saveToCsv(path);
             }
 //            25. Cập nhật is_processing của config la 0
-            handleConfig.updateProcessingConfigsExtractTo1();
+            handleConfig.updateProcessingConfigsExtractTo0();
 //            27. Cập nhật đường dẫn chi tiết của file CSV
             handleConfig.updateFilePathConfigs(path);
 //            28. Cập nhật status của config thành CRAWLED
@@ -132,11 +132,6 @@ public class Controller {
             handleConfig.updateStatusConfigsWarehouseToError();
 //            20. Thêm lỗi vào log
             handleConfig.insertStatusLogsWarehouseError(e.getMessage());
-//            21.Cho flag = 0
-//            handleConfig.updateFlagConfig(3, 0);
-////            22. Cập nhật giá trị processing = 0
-//            handleConfig.updateProcessingConfigs(3, 0);
-//            23.send mail error
             try {
                 handleConfig.sendMail(handleConfig.getRecipientWarehouse(), e.getMessage());
             } catch (MessagingException ex) {
@@ -150,56 +145,56 @@ public class Controller {
         }
     }
 
-//    public void loadToDataMart() {
-//        HandleConfig handleConfig = new HandleConfig();
-//        DateTimeFormatter dt = DateTimeFormatter.ofPattern("hh:mm:ss dd/MM/yyyy");
-//        LocalDateTime nowTime = LocalDateTime.now();
-//        String timeNow = nowTime.format(dt);
-//        try {
-////        12.Cập nhật  trạng thái của config là đang xử lý (isProcessing=true)
-//            handleConfig.updateProcessingConfigs(4, 1);
-////            13. Cập nhật status của config thành MLOADING
-//            handleConfig.updateStatusConfigs(4, "MLOADING");
-////            14. Thêm thông tin đang extract to staging vào log
-//            handleConfig.insertStatusLogs(4, "MLOADING", "Start load data to DataMart");
-////            15.Load Data To WH
-//            handleConfig.loadToDataMart();
-////            16. Cập nhật status của config thành MLOADED
-//            handleConfig.updateStatusConfigs(4, "MLOADED");
-////            17. Thêm thông tin đã load data to WH vào log
-//            handleConfig.insertStatusLogs(4, "MLOADED", "Load to mart success");
-////            18. Cập nhật status của config thành FINISHED
-//            handleConfig.updateStatusConfigs(1, "FINISHED");
-////            19. Thêm thông tin đã hoàn thành tiến trình vào log
-//            handleConfig.insertStatusLogs(4, "FINISHED", "Finished: DataWarehouse Date:" + timeNow);
-////            22.send mail error
-//            try {
-//                handleConfig.sendMail(4, "Success DataWarehouse Date: " + timeNow);
-//            } catch (MessagingException ex) {
-//                throw new RuntimeException(ex);
-//            }
-//        } catch (Exception e) {
-////            19. Cập nhật status của config thành ERROR
-//            handleConfig.updateStatusConfigs(4, "ERROR");
-////            20. Thêm lỗi vào log
-//            handleConfig.insertStatusLogs(4, "ERROR", e.getMessage());
-////            21.Cho flag = 0
-////            handleConfig.updateFlagConfig(3, 0);
-//////            22. Cập nhật giá trị processing = 0
-////            handleConfig.updateProcessingConfigs(3, 0);
-////            27.send mail error
-//            try {
-//                handleConfig.sendMail(4, e.getMessage());
-//            } catch (MessagingException ex) {
-//                throw new RuntimeException(ex);
-//            }
-//        } finally {
-//            //20.25 Cho flag = 0
-//            handleConfig.updateFlagConfig(4, 0);
-////            21. Cập nhật giá trị processing = 0
-//            handleConfig.updateProcessingConfigs(4, 0);
-//        }
-//    }
+    public void loadToDataMart() {
+        HandleConfig handleConfig = new HandleConfig();
+        DateTimeFormatter dt = DateTimeFormatter.ofPattern("hh:mm:ss dd/MM/yyyy");
+        LocalDateTime nowTime = LocalDateTime.now();
+        String timeNow = nowTime.format(dt);
+        try {
+//        12.Cập nhật  trạng thái của config là đang xử lý (isProcessing=true)
+            handleConfig.updateProcessingConfigsDatamartTo1();
+//            13. Cập nhật status của config thành MLOADING
+            handleConfig.updateStatusConfigsDatamartToMloading();
+//            14. Thêm thông tin đang extract to staging vào log
+            handleConfig.insertStatusLogsDatamartMloading();
+//            15.Load Data To WH
+            handleConfig.loadToDataMart();
+//            16. Cập nhật status của config thành MLOADED
+            handleConfig.updateStatusConfigsDatamartToMloaded();
+//            17. Thêm thông tin đã load data to WH vào log
+            handleConfig.insertStatusLogsDatamartMloaded();
+//            18. Cập nhật status của config thành FINISHED
+            handleConfig.updateStatusConfigsExtractToFinished();
+//            19. Thêm thông tin đã hoàn thành tiến trình vào log
+            handleConfig.insertStatusLogsDatamartFinished();
+//            22.send mail error
+            try {
+                handleConfig.sendMail(handleConfig.getRecipientDatamart(), "Success DataWarehouse Date: " + timeNow);
+            } catch (MessagingException ex) {
+                throw new RuntimeException(ex);
+            }
+        } catch (Exception e) {
+//            19. Cập nhật status của config thành ERROR
+            handleConfig.updateStatusConfigsDatamartToError();
+//            20. Thêm lỗi vào log
+            handleConfig.insertStatusLogsDatamartError(e.getMessage());
+//            21.Cho flag = 0
+//            handleConfig.updateFlagConfig(3, 0);
+////            22. Cập nhật giá trị processing = 0
+//            handleConfig.updateProcessingConfigs(3, 0);
+//            27.send mail error
+            try {
+                handleConfig.sendMail(handleConfig.getRecipientDatamart(), e.getMessage());
+            } catch (MessagingException ex) {
+                throw new RuntimeException(ex);
+            }
+        } finally {
+            //20.25 Cho flag = 0
+            handleConfig.updateFlagConfigsSDatamartTo0();
+//            21. Cập nhật giá trị processing = 0
+            handleConfig.updateProcessingConfigsDatamartTo0();
+        }
+    }
 
     public static void main(String[] args) throws IOException {
         Controller controller = new Controller();
