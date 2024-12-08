@@ -11,6 +11,7 @@ public class Main {
 //        1+2+3.load cac thuoc tinh trong properties va ket noi den database control
         HandleConfig handleConfig = new HandleConfig();
         Controller controller = new Controller();
+        handleConfig.control_process();
         try {
 //        4.Lay danh sach config trong table co flag = 1
             List<Map<String, Object>> configs = handleConfig.getConfigs();

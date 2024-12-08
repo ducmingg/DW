@@ -105,6 +105,10 @@ public class HandleConfig {
         return configs;
     }
 
+    public void control_process() {
+        executeProcedure("control_process");
+    }
+
     public int countProcessing() {
         String sql = "{CALL countProcessing()}";
         int result = 0;
@@ -674,6 +678,16 @@ public class HandleConfig {
     }
 
 
+    public void transform_avg_weather_daily() {
+        executeProcedure("transform_avg_weather_daily");
+    }
+
+
+    public void transform_avg_weather_monthly() {
+        executeProcedure("transform_avg_weather_monthly");
+    }
+
+
     public void executeProcedure(String procedureName) {
         try (CallableStatement statement = conn.prepareCall("{CALL " + procedureName + "()}")) {
             System.out.println("executing procedure procedureName :" + procedureName);
@@ -701,18 +715,16 @@ public class HandleConfig {
         transform_time_dim();
         transform_date_dim();
         transform_weather_fact();
+        transform_avg_weather_daily();
+        transform_avg_weather_monthly();
+    }
 
-        // Danh sách các stored procedures cần gọi
-        String[] procedures = {
-                "staging.transform_location_dim",
-                "warehouse.type2",
-                "staging.transform_time_dim",
-                "staging.transform_date_dim",
-                "staging.transform_weather_dim",
-                "staging.transform_weather_fact",
-                "warehouse.transform_aggregate",
-        };
+    public void startProcess() {
+        executeProcedure("start_process");
+    }
 
+    public void resetProcess() {
+        executeProcedure("reset_process");
     }
 
     public static void main(String[] args) {
