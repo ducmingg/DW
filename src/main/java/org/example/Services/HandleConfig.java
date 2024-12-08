@@ -309,6 +309,59 @@ public class HandleConfig {
         }
     }
 
+
+    public void update_crawl_date(String date) {
+        try (CallableStatement statement = conn.prepareCall("{CALL update_crawl_date(?)}")) {
+            statement.setString(1, date);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String get_crawl_date() {
+        String sql = "{CALL get_crawl_date()}";
+        String result = "";
+
+        try (CallableStatement callableStatement = conn.prepareCall(sql);
+             ResultSet resultSet = callableStatement.executeQuery()) {
+
+            if (resultSet.next()) {
+                result = resultSet.getString(1);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
+    public void update_crawl_date_to_default() {
+        executeProcedure("update_crawl_date_to_default");
+    }
+
+    public boolean check_crawl_date() {
+        String procedureCall = "{CALL check_crawl_date(?)}";
+        boolean isMatch = false;
+        try (CallableStatement callableStatement = conn.prepareCall(procedureCall)) {
+
+            // Đăng ký tham số đầu ra
+            callableStatement.registerOutParameter(1, Types.BOOLEAN);
+
+            // Thực thi stored procedure
+            callableStatement.execute();
+
+            // Lấy giá trị boolean từ tham số đầu ra
+            isMatch = callableStatement.getBoolean(1);
+
+            // In kết quả
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return isMatch;
+    }
+
     public void insertStatusLogsStagingStartExtract() {
         executeProcedure("insert_status_logs_staging_start_extract");
     }
@@ -731,8 +784,9 @@ public class HandleConfig {
         Connection conn = ConnectionDB.getConnection();
         HandleConfig handleConfig = new HandleConfig();
 
-        System.out.println(handleConfig.checkStatusBefore(3, "WH_LOADED"));
+//        System.out.println(handleConfig.checkStatusBefore(3, "WH_LOADED"));
         ;
+        System.out.println(handleConfig.check_crawl_date());
     }
 
 

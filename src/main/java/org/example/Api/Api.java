@@ -1,5 +1,7 @@
 package org.example.Api;
 
+import org.example.Services.HandleConfig;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,7 +27,9 @@ public class Api {
 
         String key = properties.getProperty("key");
 
-        URL url = new URL("https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/" + province + "/tomorrow?unitGroup=metric&include=hours%2Cdays&key=" + key);
+        HandleConfig handleConfig = new HandleConfig();
+        String dd = handleConfig.get_crawl_date();
+        URL url = new URL("https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/" + province + "/" + dd + "?unitGroup=metric&include=hours%2Cdays&key=" + key);
         conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Accept", "application/json");

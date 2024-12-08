@@ -30,7 +30,10 @@ public class Controller {
             LocalDateTime now = LocalDateTime.now();
             String directory = handleConfig.getDirectory();
             String file_name = handleConfig.getFile_name();
-            String path = directory + file_name + dt_now.format(now) + ".csv";
+            String dd = handleConfig.get_crawl_date();
+            String path = handleConfig.check_crawl_date()
+                    ? directory + file_name + dt_now.format(now) + ".csv"
+                    : directory + file_name + dd + ".csv";
             File file = new File(path);
 //            16. Tạo file csv dể lưu trữ dữ liệu lấy từ API
             file.createNewFile();
@@ -193,6 +196,8 @@ public class Controller {
             handleConfig.updateFlagConfigsSDatamartTo0();
 //            21. Cập nhật giá trị processing = 0
             handleConfig.updateProcessingConfigsDatamartTo0();
+//            22.cap nhat tomorrow cho crawl_date
+            handleConfig.update_crawl_date_to_default();
         }
     }
 
