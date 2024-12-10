@@ -22,6 +22,7 @@ public class LoadToDataMart {
                 while (handleConfig.countProcessing() != 0 && maxWait <= 3) {
                     System.out.println("Waiting...");
                     maxWait++;
+
                     Thread.sleep(60000);
                 }
 //            9.Kiểm tra xem còn processing nào đang chạy không
